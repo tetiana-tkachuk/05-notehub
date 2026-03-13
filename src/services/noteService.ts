@@ -21,11 +21,20 @@ export const fetchNotes = async (query: string, page: number) => {
   return response.data;
 };
 
-export const createNote = async (title: string, content: string, tag: string) =>
-  await axios.post('', {
+export const createNote = async (
+  title: string,
+  content: string,
+  tag: string
+) => {
+  const response = await axios.post('', {
     title,
     content,
     tag,
   });
+  return response.data;
+};
 
-export const deleteNote = async (id: string) => await axios.delete(id);
+export const deleteNote = async (id: string) => {
+  const response = await axios.delete(id);
+  return response.data;
+};
