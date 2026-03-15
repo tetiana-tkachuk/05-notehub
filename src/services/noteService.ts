@@ -7,7 +7,7 @@ axios.defaults.headers.common['Authorization'] =
 
 interface NotehubResponse {
   notes: Note[];
-  page: number;
+  totalPages: number;
 }
 
 export const fetchNotes = async (query: string, page: number) => {
