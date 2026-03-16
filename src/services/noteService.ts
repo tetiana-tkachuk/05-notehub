@@ -1,5 +1,5 @@
 import axios from 'axios';
-import type { Note } from '../types/note';
+import type { Note, NoteTag } from '../types/note';
 
 axios.defaults.baseURL = 'https://notehub-public.goit.study/api/notes';
 axios.defaults.headers.common['Authorization'] =
@@ -24,7 +24,7 @@ export const fetchNotes = async (query: string, page: number) => {
 export const createNote = async (
   title: string,
   content: string,
-  tag: string
+  tag: NoteTag
 ) => {
   const response = await axios.post('', {
     title,
