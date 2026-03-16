@@ -7,6 +7,8 @@ import { fetchNotes } from '../../services/noteService';
 
 import NoteList from '../NoteList/NoteList';
 import ErrorMessage from '../ErrorMesage/ErrorMessage';
+import Modal from '../Modal/Modal';
+import NoteForm from '../NoteForm/NoteForm';
 // import Pagination from '../Pagination/Pagination';
 
 function App() {
@@ -15,6 +17,7 @@ function App() {
     const savedQuery = localStorage.getItem('query');
     return savedQuery ? JSON.parse(savedQuery) : '';
   });
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const { data, isError, isSuccess } = useQuery({
     queryKey: ['notes', query, page],
@@ -36,6 +39,10 @@ function App() {
     localStorage.setItem('query', JSON.stringify(query));
   }, [query]);
 
+  const closeModal = () => {
+    setIsModalOpen(false);
+  };
+
   return (
     <div className={css.app}>
       <header className={css.toolbar}>
@@ -45,10 +52,17 @@ function App() {
           <Pagination totalPages={totalPages} page={page} setPage={setPage} />
         )} */}
 
-        <button className={css.button}>Create note +</button>
+        <button className={css.button} onClick={() => setIsModalOpen(true)}>
+          Create note +
+        </button>
       </header>
       <Toaster />
       {isError ? <ErrorMessage /> : <NoteList notes={notes} />}
+      {isModalOpen && (
+        <Modal onClose={closeModal}>
+          <NoteForm onClose={closeModal} />
+        </Modal>
+      )}
     </div>
   );
 }
