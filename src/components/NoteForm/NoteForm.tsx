@@ -38,8 +38,8 @@ export default function NoteForm({ onClose }: NoteFormProps) {
   const queryClient = useQueryClient();
 
   const mutation = useMutation({
-    mutationFn: async ({ title, content, tag }: NoteFormValues) => {
-      await createNote(title, content, tag);
+    mutationFn: async (values: NoteFormValues) => {
+      return await createNote(values.title, values.content, values.tag);
     },
     onSuccess: () => {
       onClose();
@@ -50,28 +50,22 @@ export default function NoteForm({ onClose }: NoteFormProps) {
     },
   });
 
-  const handleSubmit = (
+  const handleCreateNoteSubmit = (
     values: NoteFormValues,
     actions: FormikHelpers<NoteFormValues>
   ) => {
-    console.log('Form submitted:', values);
-    mutation.mutate({
-      title: values.title,
-      content: values.content,
-      tag: values.tag,
-    });
+    mutation.mutate(values);
     actions.resetForm();
   };
 
   return (
     <>
       <Formik
-        className={css.form}
         initialValues={initialValues}
-        onSubmit={handleSubmit}
+        onSubmit={handleCreateNoteSubmit}
         validationSchema={validationSchema}
       >
-        <Form>
+        <Form className={css.form}>
           <div className={css.formGroup}>
             <label htmlFor="title">Title</label>
             <Field id="title" type="text" name="title" className={css.input} />
