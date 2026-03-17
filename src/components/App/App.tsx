@@ -10,19 +10,18 @@ import ErrorMessage from '../ErrorMesage/ErrorMessage';
 import Modal from '../Modal/Modal';
 import NoteForm from '../NoteForm/NoteForm';
 // import Pagination from '../Pagination/Pagination';
+import SearchBox from '../SearchBox/SearchBox';
+import { useDebouncedCallback } from 'use-debounce';
+import Loader from '../../Loader/Loader';
 
 function App() {
   const [page, setPage] = useState(1);
-  const [query, setQuery] = useState<string>(() => {
-    const savedQuery = localStorage.getItem('query');
-    return savedQuery ? JSON.parse(savedQuery) : '';
-  });
+  const [query, setQuery] = useState<string>('');
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const { data, isError, isSuccess } = useQuery({
+  const { data, isError, isSuccess, isPending } = useQuery({
     queryKey: ['notes', query, page],
     queryFn: () => fetchNotes(query, page),
-    // enabled: query !== '',
     placeholderData: keepPreviousData,
   });
 
@@ -35,18 +34,19 @@ function App() {
     }
   }, [isSuccess, notes.length]);
 
-  useEffect(() => {
-    localStorage.setItem('query', JSON.stringify(query));
-  }, [query]);
-
   const closeModal = () => {
     setIsModalOpen(false);
   };
 
+  const handleChange = useDebouncedCallback(newQuery => {
+    setQuery(newQuery);
+    setPage(1);
+  }, 500);
+
   return (
     <div className={css.app}>
       <header className={css.toolbar}>
-        {/* Компонент SearchBox */}
+        <SearchBox value={query} onChange={handleChange} />
 
         {/* {isSuccess && totalPages > 1 && (
           <Pagination totalPages={totalPages} page={page} setPage={setPage} />
@@ -57,6 +57,7 @@ function App() {
         </button>
       </header>
       <Toaster />
+      {isPending && <Loader />}
       {isError ? <ErrorMessage /> : <NoteList notes={notes} />}
       {isModalOpen && (
         <Modal onClose={closeModal}>
