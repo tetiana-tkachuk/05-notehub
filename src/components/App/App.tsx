@@ -9,7 +9,7 @@ import NoteList from '../NoteList/NoteList';
 import ErrorMessage from '../ErrorMesage/ErrorMessage';
 import Modal from '../Modal/Modal';
 import NoteForm from '../NoteForm/NoteForm';
-// import Pagination from '../Pagination/Pagination';
+import Pagination from '../Pagination/Pagination';
 import SearchBox from '../SearchBox/SearchBox';
 import { useDebouncedCallback } from 'use-debounce';
 import Loader from '../../Loader/Loader';
@@ -26,7 +26,7 @@ function App() {
   });
 
   const notes = data?.notes ?? [];
-  // const totalPages = data?.totalPages ?? 0;
+  const totalPages = data?.totalPages ?? 0;
 
   useEffect(() => {
     if (isSuccess && notes.length === 0) {
@@ -38,19 +38,23 @@ function App() {
     setIsModalOpen(false);
   };
 
-  const handleChange = useDebouncedCallback(newQuery => {
+  const debounced = useDebouncedCallback(newQuery => {
     setQuery(newQuery);
     setPage(1);
-  }, 500);
+  }, 1000);
+
+  const handleSearch = (newQuery: string) => {
+    debounced(newQuery);
+  };
 
   return (
     <div className={css.app}>
       <header className={css.toolbar}>
-        <SearchBox value={query} onChange={handleChange} />
+        <SearchBox value={query} onSearch={handleSearch} />
 
-        {/* {isSuccess && totalPages > 1 && (
+        {isSuccess && totalPages > 1 && (
           <Pagination totalPages={totalPages} page={page} setPage={setPage} />
-        )} */}
+        )}
 
         <button className={css.button} onClick={() => setIsModalOpen(true)}>
           Create note +
