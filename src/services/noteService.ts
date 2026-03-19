@@ -26,7 +26,7 @@ export const createNote = async (
   content: string,
   tag: NoteTag
 ) => {
-  const response = await axios.post('', {
+  const response = await axios.post<Note>('', {
     title,
     content,
     tag,
@@ -35,6 +35,6 @@ export const createNote = async (
 };
 
 export const deleteNote = async (id: string) => {
-  const response = await axios.delete(id);
+  const response = await axios.delete<Note>(id);
   return response.data;
 };
